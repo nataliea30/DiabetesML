@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from imblearn.over_sampling import SMOTE
 from imblearn.under_sampling import RandomUnderSampler
 from sklearn.preprocessing import StandardScaler
-from sklearn.preprocessing import OneHotEncoder
+from sklearn.preprocessing import OneHotEncoder, LabelEncoder
 from sklearn.compose import ColumnTransformer
 from imblearn.pipeline import Pipeline as imbPipeline
 from sklearn.ensemble import RandomForestClassifier
@@ -79,7 +79,7 @@ def graphingData():
     plt.figure(figsize=(15, 10))
     sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', linewidths=0.5, fmt='.2f')
     plt.title("Correlation Matrix Heatmap")
-    plt.show()
+    #plt.show()
 
     # Graph II: Correlation with Diabetes
     target_corr_sorted = data.corr()['diabetes'].drop('diabetes').sort_values(ascending=False)
@@ -89,7 +89,7 @@ def graphingData():
     sns.set_palette("PuBuGn_d")
     sns.heatmap(target_corr_sorted.to_frame(), cmap="coolwarm", annot=True, fmt='.2f')
     plt.title('Correlation with Diabetes')
-    plt.show()
+    #plt.show()
 
     # Graphing diabetes positive and negative ratios
     sns.countplot(x='diabetes', data=df)
@@ -122,62 +122,46 @@ clf = imbPipeline(steps=[('preprocessor', preprocessor),
                       ('classifier', RandomForestClassifier())])
 
 
-def bestParam():
-    # The following finds the best hyperparameters with the highest accuracy to use for the model
-    # Define the hyperparameters and the values we want to test
-    param_grid = {
-        'classifier__n_estimators': [50, 100, 200],
-        'classifier__max_depth': [None, 10, 20],
-        'classifier__min_samples_split': [2, 5, 10],
-        'classifier__min_samples_leaf': [1, 2, 4]
-    }
+# The following finds the best hyperparameters with the highest accuracy to use for the model
+# Define the hyperparameters and the values we want to test
+param_grid = {
+    'classifier__n_estimators': [50, 100, 200],
+    'classifier__max_depth': [None, 10, 20],
+    'classifier__min_samples_split': [2, 5, 10],
+    'classifier__min_samples_leaf': [1, 2, 4]
+}
 
 
-    # Create Grid Search object
-    grid_search = GridSearchCV(clf, param_grid, cv=5)
+# Create Grid Search object
+grid_search = GridSearchCV(clf, param_grid, cv=5)
 
-    # Split data into train and test sets
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+# Split data into train and test sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-    # Train the model
-    grid_search.fit(X_train, y_train)
+# Train the model
+grid_search.fit(X_train, y_train)
 
-    # Print the best parameters
-    print("Best Parameters: ", grid_search.best_params_)
+# Print the best parameters
+print("Best Parameters: ", grid_search.best_params_)
 
-    # Convert GridSearchCV results to a DataFrame and plot
-    results_df = pd.DataFrame(grid_search.cv_results_)
-    plt.figure(figsize=(8, 6))
-    sns.lineplot(data=results_df, x='param_classifier__n_estimators', y='mean_test_score', hue='param_classifier__max_depth', palette='viridis')
-    plt.title('Hyperparameters Tuning Results')
-    plt.xlabel('Number of Estimators')
-    plt.ylabel('Mean Test Score')
-    plt.show()
+# Convert GridSearchCV results to a DataFrame and plot
+results_df = pd.DataFrame(grid_search.cv_results_)
+plt.figure(figsize=(8, 6))
+sns.lineplot(data=results_df, x='param_classifier__n_estimators', y='mean_test_score', hue='param_classifier__max_depth', palette='viridis')
+plt.title('Hyperparameters Tuning Results')
+plt.xlabel('Number of Estimators')
+plt.ylabel('Mean Test Score')
+#plt.show()
 
 
 
 # Create the random forest classifier with the best hyperparameters
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify = y)
 
-encoder = OneHotEncoder()
-X_train_encoded = encoder.fit_transform(X_train)
+# Predict on the test set using the best model
+y_pred = grid_search.predict(X_test)
 
-model = RandomForestClassifier(
-    n_estimators=100,
-    max_depth=10,
-    min_samples_split=5,
-    min_samples_leaf=1
-)
-
-# Train the model with your training data
-model.fit(X_train, y_train)
-
-# Make predictions on your test data
-y_pred = model.predict(X_test)
-
-# Evaluate the model's performance
-accuracy = accuracy_score(y_test, y_pred)
-print("Accuracy:", accuracy)
+# Evaluate the model
+print("Model Accuracy: ", accuracy_score(y_test, y_pred))
 print(classification_report(y_test, y_pred))
 
 # Plot confusion matrix
