@@ -12,6 +12,7 @@ from imblearn.pipeline import Pipeline as imbPipeline
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split, GridSearchCV
 import time
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
 
 start_time = time.time()
 
@@ -121,38 +122,69 @@ clf = imbPipeline(steps=[('preprocessor', preprocessor),
                       ('classifier', RandomForestClassifier())])
 
 
-# The following finds the best hyperparameters with the highest accuracy to use for the model
-# Define the hyperparameters and the values we want to test
-param_grid = {
-    'classifier__n_estimators': [50, 100, 200],
-    'classifier__max_depth': [None, 10, 20],
-    'classifier__min_samples_split': [2, 5, 10],
-    'classifier__min_samples_leaf': [1, 2, 4]
-}
+def bestParam():
+    # The following finds the best hyperparameters with the highest accuracy to use for the model
+    # Define the hyperparameters and the values we want to test
+    param_grid = {
+        'classifier__n_estimators': [50, 100, 200],
+        'classifier__max_depth': [None, 10, 20],
+        'classifier__min_samples_split': [2, 5, 10],
+        'classifier__min_samples_leaf': [1, 2, 4]
+    }
 
 
-# Create Grid Search object
-grid_search = GridSearchCV(clf, param_grid, cv=5)
+    # Create Grid Search object
+    grid_search = GridSearchCV(clf, param_grid, cv=5)
 
-# Split data into train and test sets
+    # Split data into train and test sets
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+    # Train the model
+    grid_search.fit(X_train, y_train)
+
+    # Print the best parameters
+    print("Best Parameters: ", grid_search.best_params_)
+
+    # Convert GridSearchCV results to a DataFrame and plot
+    results_df = pd.DataFrame(grid_search.cv_results_)
+    plt.figure(figsize=(8, 6))
+    sns.lineplot(data=results_df, x='param_classifier__n_estimators', y='mean_test_score', hue='param_classifier__max_depth', palette='viridis')
+    plt.title('Hyperparameters Tuning Results')
+    plt.xlabel('Number of Estimators')
+    plt.ylabel('Mean Test Score')
+    plt.show()
+
+
+
+# Create the random forest classifier with the best hyperparameters
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-# Train the model
-grid_search.fit(X_train, y_train)
+model = RandomForestClassifier(
+    n_estimators=100,
+    max_depth=10,
+    min_samples_split=5,
+    min_samples_leaf=1
+)
 
-# Print the best parameters
-print("Best Parameters: ", grid_search.best_params_)
+# Train the model with your training data
+model.fit(X_train, y_train)
 
-# Convert GridSearchCV results to a DataFrame and plot
-results_df = pd.DataFrame(grid_search.cv_results_)
+# Make predictions on your test data
+y_pred = model.predict(X_test)
+
+# Evaluate the model's performance
+accuracy = accuracy_score(y_test, y_pred)
+print("Accuracy:", accuracy)
+print(classification_report(y_test, y_pred))
+
+# Plot confusion matrix
+cm = confusion_matrix(y_test, y_pred)
 plt.figure(figsize=(8, 6))
-sns.lineplot(data=results_df, x='param_classifier__n_estimators', y='mean_test_score', hue='param_classifier__max_depth', palette='viridis')
-plt.title('Hyperparameters Tuning Results')
-plt.xlabel('Number of Estimators')
-plt.ylabel('Mean Test Score')
-#plt.show()
-
-
+sns.heatmap(cm, annot=True, fmt='d', cmap='Blues')
+plt.title('Confusion Matrix')
+plt.xlabel('Predicted')
+plt.ylabel('True')
+plt.show()
 
 
 
