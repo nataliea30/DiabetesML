@@ -5,6 +5,11 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from imblearn.over_sampling import SMOTE
 from imblearn.under_sampling import RandomUnderSampler
+from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import OneHotEncoder
+from sklearn.compose import ColumnTransformer
+from imblearn.pipeline import Pipeline as imbPipeline
+from sklearn.ensemble import RandomForestClassifier
 
 # Ingesting the csv dataset
 df = pd.read_csv('diabetes_prediction_dataset.csv')
@@ -91,5 +96,24 @@ def graphingData():
 over = SMOTE(sampling_strategy=0.1)
 under = RandomUnderSampler(sampling_strategy=0.5)
 
+
+
+# Define preprocessor
+preprocessor = ColumnTransformer(
+    transformers=[
+        ('num', StandardScaler(), ['age', 'bmi', 'HbA1c_level', 'blood_glucose_level','hypertension','heart_disease']),
+        ('cat', OneHotEncoder(), ['gender','smoking_history'])
+    ])
+
+# Split data into features and target variable
+X = df.drop('diabetes', axis=1)
+y = df['diabetes']
+
+
+# Create a pipeline that preprocesses the data, resamples data, and then trains a classifier
+clf = imbPipeline(steps=[('preprocessor', preprocessor),
+                      ('over', over),
+                      ('under', under),
+                      ('classifier', RandomForestClassifier())])
 
 
