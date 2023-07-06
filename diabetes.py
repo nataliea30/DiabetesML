@@ -7,3 +7,4 @@ dataFrame = pd.read_csv('diabetes_prediction_dataset.csv')
 
 print(dataFrame.shape)
 print(dataFrame.head())
+dataFrame.info()
