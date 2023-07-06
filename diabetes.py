@@ -40,3 +40,21 @@ dataFrame.loc[:, 'smoking_history'] = dataFrame['smoking_history'].apply(recateg
 print(dataFrame['smoking_history'].value_counts())
 
 data = dataFrame.copy()
+
+
+#reaplcing the original coloumns of data to the recategorized ones
+def perform_one_hot_encoding(df, column_name):
+    # Perform one-hot encoding on the specified column
+    dummies = pd.get_dummies(df[column_name], prefix=column_name)
+
+    # Drop the original column and append the new dummy columns to the dataframe
+    df = pd.concat([df.drop(column_name, axis=1), dummies], axis=1)
+
+    return df
+
+# Perform one-hot encoding on the gender variable
+data = perform_one_hot_encoding(data, 'gender')
+
+# Perform one-hot encoding on the smoking history variable
+data = perform_one_hot_encoding(data, 'smoking_history')
+
