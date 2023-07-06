@@ -3,6 +3,8 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
+from imblearn.over_sampling import SMOTE
+from imblearn.under_sampling import RandomUnderSampler
 
 # Ingesting the csv dataset
 df = pd.read_csv('diabetes_prediction_dataset.csv')
@@ -59,22 +61,35 @@ data = perform_one_hot_encoding(data, 'gender')
 data = perform_one_hot_encoding(data, 'smoking_history')
 
 
-# Compute the correlation matrix
-correlation_matrix = data.corr()
+def graphingData():
+    # Compute the correlation matrix
+    correlation_matrix = data.corr()
 
-# Graph I: Correlation Matrix Heatmap
-plt.figure(figsize=(15, 10))
-sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', linewidths=0.5, fmt='.2f')
-plt.title("Correlation Matrix Heatmap")
-plt.show()
+    # Graph I: Correlation Matrix Heatmap
+    plt.figure(figsize=(15, 10))
+    sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', linewidths=0.5, fmt='.2f')
+    plt.title("Correlation Matrix Heatmap")
+    plt.show()
 
-# Graph II: Correlation with Diabetes
-target_corr_sorted = data.corr()['diabetes'].drop('diabetes').sort_values(ascending=False)
+    # Graph II: Correlation with Diabetes
+    target_corr_sorted = data.corr()['diabetes'].drop('diabetes').sort_values(ascending=False)
 
-sns.set(font_scale=0.8)
-sns.set_style("white")
-sns.set_palette("PuBuGn_d")
-sns.heatmap(target_corr_sorted.to_frame(), cmap="coolwarm", annot=True, fmt='.2f')
-plt.title('Correlation with Diabetes')
-plt.show()
+    sns.set(font_scale=0.8)
+    sns.set_style("white")
+    sns.set_palette("PuBuGn_d")
+    sns.heatmap(target_corr_sorted.to_frame(), cmap="coolwarm", annot=True, fmt='.2f')
+    plt.title('Correlation with Diabetes')
+    plt.show()
+
+    # Graphing diabetes positive and negative ratios
+    sns.countplot(x='diabetes', data=df)
+    plt.title('Diabetes Distribution')
+    plt.show()
+
+
+#oversampling and undersampling the data because the majority highly offsets the minority (91% neg to 9% pos)
+over = SMOTE(sampling_strategy=0.1)
+under = RandomUnderSampler(sampling_strategy=0.5)
+
+
 
