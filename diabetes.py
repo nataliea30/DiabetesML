@@ -157,7 +157,7 @@ def bestParam():
 
 
 # Create the random forest classifier with the best hyperparameters
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratefy = y)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify = y)
 
 encoder = OneHotEncoder()
 X_train_encoded = encoder.fit_transform(X_train)
