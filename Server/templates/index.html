@@ -25,23 +25,46 @@
           />
         </div>
         <div class="form-row">
-          <label for="LastName">Last Name</label>
+          <label for="hypertension">High Blood Pressure</label>
           <input
-            type="text"
+            type="checkbox"
             class="input-text input-text-block w-100"
-            id="LastName"
-            name="LastName"
+            id="hypertension"
+            name="hypertension"
           />
         </div>
         <div class="form-row">
-          <label for="Email">Email</label>
+          <label for="heart_disease">History of Heart Disease</label>
           <input
-            type="email"
+            type="checkbox"
             class="input-text input-text-block w-100"
-            id="Email"
-            name="Email"
+            id="heart_disease"
+            name="heart_disease"
           />
         </div>
+        <div class="gender">
+          <label for="genderdrp">Gender:</label>
+          <select id="gender" name="gender">
+            <option value="Female">Female</option>
+            <option value="Male">Male</option>
+          </select>
+        </div>
+        <div class="smoking_history">
+          <label for="smoking_history">Smoking History:</label>
+          <select id="smoking_history" name="smoking_history">
+            <option value="Never">Never</option>
+            <option value="current">Current</option>
+            <option value="former">Former</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label for="bmi">BMI</label>
+          <input
+            type="number"
+            class="input-text input-text-block w-100"
+            id="bmi"
+            name="bmi"
+          />
         <div class="form-row mx-auto">
           <button type="submit" class="btn-submit" id="btnSubmit">
             Submit
@@ -139,7 +162,7 @@
         console.log(response);
         // 2.5 Inform user of result
         if (response)
-          window.location = `/success.html?FirstName=${response.FirstName}&LastName=${response.LastName}&Email=${response.Email}&id=${response.id}`;
+          window.location = `/success?Risk=${response.guess}`;
         else alert(`An error occured.`);
       }
 

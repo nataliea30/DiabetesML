@@ -17,14 +17,16 @@ def dataPrep(X):
     
     data = np.append(data, X["age"])
     
-    if X["hypertension"] == "True":
-        data = np.append(data, 1)
-    else:
+    try:
+        if X["hypertension"] == "on":
+            data = np.append(data, 1)
+    except:
         data = np.append(data, 0)
         
-    if X["heart_disease"] == "True":
-        data = np.append(data, 1)
-    else:
+    try:
+        if X["heart_disease"] == "True":
+            data = np.append(data, 1)
+    except:
         data = np.append(data, 0)
 
     if X["gender"] == "Female":
@@ -56,16 +58,6 @@ def dataPrep(X):
         data = np.append(data, 0)
         data = np.append(data, 0)
         data = np.append(data, 1)
-    elif X["smoking_history"] == "never smoked":
-        print("never smoked")
-        data = np.append(data, 0)
-        data = np.append(data, 1)
-        data = np.append(data, 0)
-    elif X["smoking_history"] == "not current":
-        print("not current")
-        data = np.append(data, 0)
-        data = np.append(data, 0)
-        data = np.append(data, 1)
         
     data = np.append(data, X["bmi"])
 
@@ -84,10 +76,20 @@ def hello():
     print("Home Accessed")
     return render_template('index.html')
 
+@app.route('/success')
+def success():
+    print("Success Accessed")
+    return render_template('success.html')
+
 @app.route('/guess', methods=['POST'])
 def addOne():
     newGuess = request.get_json()
-    return jsonify({'guess' : str(guess(dataPrep(newGuess)))})
+    print(newGuess)
+    if guess(dataPrep(newGuess)) == 1:
+        nGuess = "High"
+    else:
+        nGuess = "Low"
+    return jsonify({'guess' : nGuess})
 
 if __name__ == "__main__":
     app.run(debug=True,host="0.0.0.0" , port=5003)
