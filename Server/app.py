@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, render_template, request
 import numpy as np
 import _pickle as cPickle
+import tensorflow as tf
 
 print("Loading Simple Model")
 
@@ -8,8 +9,8 @@ with open('simple.model', 'rb') as f:
     rfS = cPickle.load(f)
     
 print("Loading Complex Model")
-with open('complex.model', 'rb') as f:
-    rfC = cPickle.load(f)
+rfC = tf.keras.models.load_model('complex.h5')
+
     
 print("Model Loaded")
 
@@ -34,6 +35,10 @@ def dataPrepComplex(X):
     except:
         data = np.append(data, 0)
 
+    data = np.append(data, X["bmi"])
+    data = np.append(data, X["HbA1c_level"])
+    data = np.append(data, X["blood_glucose_level"])
+    
     if X["gender"] == "Female":
         print("Female")
         data = np.append(data, 1)
@@ -64,9 +69,7 @@ def dataPrepComplex(X):
         data = np.append(data, 0)
         data = np.append(data, 1)
         
-    data = np.append(data, X["bmi"])
-    data = np.append(data, X["HbA1c_level"])
-    data = np.append(data, X["blood_glucose_level"])
+    
 
 
     data = data.astype(float)
@@ -167,7 +170,9 @@ def simpleGuess():
 @app.route('/complex/guess', methods=['POST'])
 def complexGuess():
     newGuess = request.get_json()
-    if complexPredict(dataPrepComplex(newGuess)) == 1:
+    prediction = complexPredict(dataPrepComplex(newGuess))
+    print(prediction)
+    if prediction == 1:
         nGuess = "HIGH"
     else:
         nGuess = "LOW"
