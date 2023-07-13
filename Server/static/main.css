@@ -6,20 +6,33 @@ body {
   justify-content: center;
   align-items: center;
   font-family: "Barlow", sans-serif;
+  font-size: 25px;
+}
 
+a:visited {
+  text-decoration: none;
+  color: black;
+}
+
+a:active {
+  text-decoration: none;
+  color: black;
+}
+
+a:hover {
+  text-decoration: none;
+  color: white;
 }
 
 .success {
-    position:absolute;
-    white-space: nowrap;
-    font-size: 25px;
-    top: 125px;
-
+  position: absolute;
+  white-space: nowrap;
+  font-size: 25px;
+  top: 125px;
 }
 
 .form {
   font-size: 25px;
- 
 }
 
 input[type="number"] {
@@ -31,28 +44,42 @@ input[type="number"] {
 }
 
 input + span {
-    position: relative;
-  }
-  
-  input + span::before {
-    position: absolute;
-    right: -20px;
-    top: 5px;
-  }
-  
-  input:valid + span::before {
-    content: "✓";
-    color: green;
-  }
+  position: relative;
+}
 
-.backBtn{
-    position: absolute;
-    top: 250px;
-    font-size: 25px;
-    background-color: #d8d2c6;
-    border-radius: 10px;
-    cursor: pointer;
-    padding: 10px;
-    text-decoration: none;
-    color: black;
+input + span::before {
+  position: absolute;
+  right: -20px;
+  top: 5px;
+}
+
+input:valid + span::before {
+  content: "✓";
+  color: green;
+}
+
+.backBtn {
+  position: relative;
+  top: 30px;
+  font-size: 25px;
+  border-radius: 10px;
+  cursor: pointer;
+  padding: 10px;
+  text-decoration: none;
+  color: black;
+}
+
+header {
+  position: relative;
+}
+
+.selecter {
+  position: relative;
+  top: 50px;
+  font-size: 25px;
+  border-radius: 10px;
+  cursor: pointer;
+  padding: 10px;
+  text-decoration: none;
+  color: black;
 }
