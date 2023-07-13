@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Diabetes</title>
+    <link rel="stylesheet" href='static/main.css' />
+    <link rel="preconnect" href="https://fonts.googleapis.com"> 
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> 
+    <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@200&display=swap" rel="stylesheet">
+  </head>
+  <body>
+    <div class="form">
+      <form action="" id="sampleForm">
+        <h2>Diabetes Form</h2>
+        <div class="form-row">
+          <label for="age">Age</label>
+          <input
+            type="number"
+            class="input-text input-text-block w-100"
+            id="age"
+            name="age"
+            required
+          />
+        </div>
+        <div class="form-row">
+          <label for="hypertension">High Blood Pressure</label>
+          <input
+            type="checkbox"
+            class="input-text input-text-block w-100"
+            id="hypertension"
+            name="hypertension"
+          />
+        </div>
+        <div class="form-row">
+          <label for="heart_disease">History of Heart Disease</label>
+          <input
+            type="checkbox"
+            class="input-text input-text-block w-100"
+            id="heart_disease"
+            name="heart_disease"
+          />
+        </div>
+        <div class="gender">
+          <label for="genderdrp">Gender:</label>
+          <select id="gender" name="gender" required>
+            <option value="">Select Gender</option>
+            <option value="Female">Female</option>
+            <option value="Male">Male</option>
+          </select>
+        </div>
+        <div class="smoking_history">
+          <label for="smoking_history">Smoking History:</label>
+          <select id="smoking_history" name="smoking_history" required>
+            <option value="">Select Smoking History</option>
+            <option value="Never">Never</option>
+            <option value="current">Current</option>
+            <option value="former">Former</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label for="bmi">BMI</label>
+          <input
+            type="number"
+            class="input-text input-text-block w-100"
+            id="bmi"
+            name="bmi"
+            required
+            step=".01"
+          />
+        </div>
+        <div class="form-row mx-auto">
+          <button type="submit" class="btn-submit" id="btnSubmit">
+            Submit
+          </button>
+        </div>
+      </form>
+      <div class="backBtn">
+        <a href="/">Back</a>
+      </div>
+    </div>
+    
+    
+    <script>
+      class FetchService {
+        constructor() {}
+
+        async performGetHttpRequest(fetchLink, headers, query = null) {
+          if (!fetchLink || !headers) {
+            throw new Error(
+              "One or more GET request parameters was not passed."
+            );
+          }
+          try {
+            const rawResponse = await fetch(fetchLink, {
+              method: "GET",
+              headers: headers,
+              query: query != null ? query : "",
+            });
+            const content = await rawResponse.json();
+            return content;
+          } catch (err) {
+            console.error(`Error at fetch GET: ${err}`);
+            throw err;
+          }
+        }
+
+        async performPostHttpRequest(fetchLink, headers, body) {
+          if (!fetchLink || !headers || !body) {
+            throw new Error(
+              "One or more POST request parameters was not passed."
+            );
+          }
+          try {
+            const rawResponse = await fetch(fetchLink, {
+              method: "POST",
+              headers: headers,
+              body: JSON.stringify(body),
+            });
+            const content = await rawResponse.json();
+            return content;
+          } catch (err) {
+            console.error(`Error at fetch POST: ${err}`);
+            throw err;
+          }
+        }
+
+        async performPutHttpRequest(fetchLink, headers, body) {
+          if (!fetchLink || !headers || !body) {
+            throw new Error(
+              "One or more POST request parameters was not passed."
+            );
+          }
+          try {
+            const rawResponse = await fetch(fetchLink, {
+              method: "PUT",
+              headers: headers,
+              body: JSON.stringify(body),
+            });
+            const content = await rawResponse.json();
+            return content;
+          } catch (err) {
+            console.error(`Error at fetch PUT: ${err}`);
+            throw err;
+          }
+        }
+      }
+      /*-- Objects --*/
+      const fetchService = new FetchService();
+      /*-- /Objects --*/
+
+      /*--Functions--*/
+      async function submitForm(e, form) {
+        // 1. Prevent reloading page
+        e.preventDefault();
+        // 2. Submit the form
+        // 2.1 User Interaction
+        const btnSubmit = document.getElementById("btnSubmit");
+        btnSubmit.disabled = true;
+        setTimeout(() => (btnSubmit.disabled = false), 2000);
+        // 2.2 Build JSON body
+        const jsonFormData = buildJsonFormData(form);
+        // 2.3 Build Headers
+        const headers = buildHeaders();
+        // 2.4 Request & Response
+        const response = await fetchService.performPostHttpRequest(
+          `/simple/guess`,
+          headers,
+          jsonFormData
+        ); // Uses JSON Placeholder
+        console.log(response);
+        // 2.5 Inform user of result
+        if (response)
+          window.location = `/success?Risk=${response.guess}`;
+        else alert(`An error occured.`);
+      }
+
+      function buildHeaders(authorization = null) {
+        const headers = {
+          "Content-Type": "application/json",
+          Authorization: authorization ? authorization : "Bearer TOKEN_MISSING",
+        };
+        return headers;
+      }
+
+      function buildJsonFormData(form) {
+        const jsonFormData = {};
+        for (const pair of new FormData(form)) {
+          jsonFormData[pair[0]] = pair[1];
+        }
+        return jsonFormData;
+      }
+      
+      // Function to display an error message
+      function displayError(input, message) {
+        // Remove any existing error message
+        const errorElement = document.getElementById(input.id + '-error');
+        if (errorElement) {
+          errorElement.parentNode.removeChild(errorElement);
+        }
+        
+        // Create error message element
+        const error = document.createElement('p');
+        error.classList.add('error-message');
+        error.id = input.id + '-error';
+        error.textContent = message;
+        
+        // Insert error message after the input element
+        input.parentNode.insertBefore(error, input.nextSibling);
+      }
+      
+      // Function to clear error messages
+      function clearErrors() {
+        const errorMessages = document.querySelectorAll('.error-message');
+        errorMessages.forEach(errorMessage => {
+          errorMessage.parentNode.removeChild(errorMessage);
+        });
+      }
+      
+      /*--Event Listeners--*/
+      const sampleForm = document.querySelector("#sampleForm");
+      if (sampleForm) {
+        sampleForm.addEventListener("submit", function (e) {
+          e.preventDefault();
+          
+          clearErrors();
+          
+          const ageInput = document.getElementById('age');
+          const genderSelect = document.getElementById('gender');
+          const smokingHistorySelect = document.getElementById('smoking_history');
+          const bmiInput = document.getElementById('bmi');
+          
+          let isValid = true;
+          
+          // Validate age
+          if (ageInput.value === '' || isNaN(ageInput.value)) {
+            displayError(ageInput, 'Please enter a valid age');
+            isValid = false;
+          }
+          
+          // Validate gender
+          if (genderSelect.value === '') {
+            displayError(genderSelect, 'Please select a gender');
+            isValid = false;
+          }
+          
+          // Validate smoking history
+          if (smokingHistorySelect.value === '') {
+            displayError(smokingHistorySelect, 'Please select a smoking history');
+            isValid = false;
+          }
+          
+          // Validate BMI
+          if (bmiInput.value === '' || isNaN(bmiInput.value)) {
+            displayError(bmiInput, 'Please enter a valid BMI');
+            isValid = false;
+          }
+          
+          if (isValid) {
+            submitForm(e, this);
+          }
+        });
+      }
+      /*--/Event Listeners--*/
+    </script>
+  </body>
+</html>
