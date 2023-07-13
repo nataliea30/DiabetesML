@@ -69,17 +69,4 @@ input:valid + span::before {
   color: black;
 }
 
-header {
-  position: relative;
-}
 
-.selecter {
-  position: relative;
-  top: 50px;
-  font-size: 25px;
-  border-radius: 10px;
-  cursor: pointer;
-  padding: 10px;
-  text-decoration: none;
-  color: black;
-}
