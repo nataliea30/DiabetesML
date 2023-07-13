@@ -24,9 +24,9 @@ def dataPrepComplex(X):
     
     try:
         if X["hypertension"] == "on":
-            data = np.append(data, 50)
+            data = np.append(data, 1)
     except:
-        data = np.append(data, 40)
+        data = np.append(data, 0)
         
     try:
         if X["heart_disease"] == "on":
