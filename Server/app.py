@@ -24,7 +24,7 @@ def dataPrep(X):
         data = np.append(data, 0)
         
     try:
-        if X["heart_disease"] == "True":
+        if X["heart_disease"] == "on":
             data = np.append(data, 1)
     except:
         data = np.append(data, 0)

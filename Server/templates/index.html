@@ -3,16 +3,13 @@
   <head>
     <meta charset="UTF-8" />
     <title>Diabetes</title>
+    <link rel="stylesheet" href='static/main.css' />
+    <link rel="preconnect" href="https://fonts.googleapis.com"> 
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> 
+    <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@200&display=swap" rel="stylesheet">
   </head>
   <body>
-    <h1>Prediction of Type 2 Diabetes Using Machine Learning</h1>
-    <p>
-      Predicting type 2 diabetes using machine learning is an innovative
-      approach that leverages advanced algorithms to analyze vast amounts of
-      data and identify patterns related to risks of diabetes.
-    </p>
-
-    <div class="container card card-color">
+    <div class="form">
       <form action="" id="sampleForm">
         <h2>Diabetes Form</h2>
         <div class="form-row">
@@ -22,6 +19,7 @@
             class="input-text input-text-block w-100"
             id="age"
             name="age"
+            required
           />
         </div>
         <div class="form-row">
@@ -44,14 +42,16 @@
         </div>
         <div class="gender">
           <label for="genderdrp">Gender:</label>
-          <select id="gender" name="gender">
+          <select id="gender" name="gender" required>
+            <option value="">Select Gender</option>
             <option value="Female">Female</option>
             <option value="Male">Male</option>
           </select>
         </div>
         <div class="smoking_history">
           <label for="smoking_history">Smoking History:</label>
-          <select id="smoking_history" name="smoking_history">
+          <select id="smoking_history" name="smoking_history" required>
+            <option value="">Select Smoking History</option>
             <option value="Never">Never</option>
             <option value="current">Current</option>
             <option value="former">Former</option>
@@ -64,7 +64,9 @@
             class="input-text input-text-block w-100"
             id="bmi"
             name="bmi"
+            required
           />
+        </div>
         <div class="form-row mx-auto">
           <button type="submit" class="btn-submit" id="btnSubmit">
             Submit
@@ -181,13 +183,75 @@
         }
         return jsonFormData;
       }
-      /*--/Functions--*/
-
+      
+      // Function to display an error message
+      function displayError(input, message) {
+        // Remove any existing error message
+        const errorElement = document.getElementById(input.id + '-error');
+        if (errorElement) {
+          errorElement.parentNode.removeChild(errorElement);
+        }
+        
+        // Create error message element
+        const error = document.createElement('p');
+        error.classList.add('error-message');
+        error.id = input.id + '-error';
+        error.textContent = message;
+        
+        // Insert error message after the input element
+        input.parentNode.insertBefore(error, input.nextSibling);
+      }
+      
+      // Function to clear error messages
+      function clearErrors() {
+        const errorMessages = document.querySelectorAll('.error-message');
+        errorMessages.forEach(errorMessage => {
+          errorMessage.parentNode.removeChild(errorMessage);
+        });
+      }
+      
       /*--Event Listeners--*/
       const sampleForm = document.querySelector("#sampleForm");
       if (sampleForm) {
         sampleForm.addEventListener("submit", function (e) {
-          submitForm(e, this);
+          e.preventDefault();
+          
+          clearErrors();
+          
+          const ageInput = document.getElementById('age');
+          const genderSelect = document.getElementById('gender');
+          const smokingHistorySelect = document.getElementById('smoking_history');
+          const bmiInput = document.getElementById('bmi');
+          
+          let isValid = true;
+          
+          // Validate age
+          if (ageInput.value === '' || isNaN(ageInput.value)) {
+            displayError(ageInput, 'Please enter a valid age');
+            isValid = false;
+          }
+          
+          // Validate gender
+          if (genderSelect.value === '') {
+            displayError(genderSelect, 'Please select a gender');
+            isValid = false;
+          }
+          
+          // Validate smoking history
+          if (smokingHistorySelect.value === '') {
+            displayError(smokingHistorySelect, 'Please select a smoking history');
+            isValid = false;
+          }
+          
+          // Validate BMI
+          if (bmiInput.value === '' || isNaN(bmiInput.value)) {
+            displayError(bmiInput, 'Please enter a valid BMI');
+            isValid = false;
+          }
+          
+          if (isValid) {
+            submitForm(e, this);
+          }
         });
       }
       /*--/Event Listeners--*/
