@@ -25,7 +25,7 @@ a:hover {
 }
 
 .success {
-  position: absolute;
+  position: fixed ;
   white-space: nowrap;
   font-size: 25px;
   top: 125px;
@@ -68,5 +68,18 @@ input:valid + span::before {
   text-decoration: none;
   color: black;
 }
+
+.backBtn2 {
+    position: fixed;
+    top: 200px;
+    font-size: 25px;
+    border-radius: 10px;
+    cursor: pointer;
+    padding: 10px;
+    text-decoration: none;
+    color: black;
+    text-align: center;
+
+  }
 
 
