@@ -86,9 +86,9 @@ def addOne():
     newGuess = request.get_json()
     print(newGuess)
     if guess(dataPrep(newGuess)) == 1:
-        nGuess = "High"
+        nGuess = "HIGH"
     else:
-        nGuess = "Low"
+        nGuess = "LOW"
     return jsonify({'guess' : nGuess})
 
 if __name__ == "__main__":

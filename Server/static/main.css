@@ -40,12 +40,19 @@ input + span {
     top: 5px;
   }
   
-  input:invalid {
-    border: 2px solid red;
-  }
-
-  
   input:valid + span::before {
     content: "✓";
     color: green;
   }
+
+.backBtn{
+    position: absolute;
+    top: 250px;
+    font-size: 25px;
+    background-color: #d8d2c6;
+    border-radius: 10px;
+    cursor: pointer;
+    padding: 10px;
+    text-decoration: none;
+    color: black;
+}
