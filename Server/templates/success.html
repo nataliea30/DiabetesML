@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Success</title>
+    <link rel="stylesheet" href="static/main.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Barlow:wght@200&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <h1>Success</h1>
+    <div class="success">
+      <p id="risk"></p>
+      <script>
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        const risk = urlParams.get("Risk");
+        document.getElementById(
+          "risk"
+        ).innerHTML = `<p>You have a ${risk} risk of Diabetes<p>`;
+      </script>
+    </div>
+  </body>
+</html>
